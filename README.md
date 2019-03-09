@@ -11,4 +11,4 @@ I have added `New-O365ExchangeServiceCertificate` to the module which will creat
 You will need to manually add your Office365 TenantId and Azure ApplicationId.
 
 # Notes
-You may have to reload the module once your configuration file has been updated to be able to access your tenant.
+If you have made changes to the config file after the module has been loaded, you will have to reload the module to pickup the changes.
