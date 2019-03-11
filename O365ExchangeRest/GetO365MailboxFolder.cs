@@ -6,8 +6,6 @@
 //-----------------------------------------------------------------------
 namespace O365ExchangeRest
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Management.Automation;
     using Exchange.RestServices;
     using Microsoft.OutlookServices;
@@ -23,8 +21,30 @@ namespace O365ExchangeRest
         /// <summary>
         /// Gets or sets the mailbox SMTP address
         /// </summary>
-        [Parameter(Mandatory = true)]
+        [Parameter(ParameterSetName = "Default", Mandatory = true)]
+        [Parameter(ParameterSetName = "FolderName", Mandatory = true)]
+        [Parameter(ParameterSetName = "FolderId", Mandatory = true)]
         public string SmtpAddress { get; set; }
+
+        /// <summary>
+        /// Gets or sets the mailbox folder name
+        /// </summary>
+        [Parameter(ParameterSetName = "FolderName", Mandatory = true)]
+        public string FolderName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the mailbox folder identification number
+        /// </summary>
+        [Parameter(ParameterSetName = "FolderId", Mandatory = true)]
+        public FolderId FolderId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the mailbox folder root
+        /// </summary>
+        [Parameter(ParameterSetName = "Default", Mandatory = false)]
+        [Parameter(ParameterSetName = "FolderName", Mandatory = false)]
+        [Parameter(ParameterSetName = "FolderId", Mandatory = false)]
+        public WellKnownFolderName FolderRoot { get; set; } = WellKnownFolderName.MsgFolderRoot;
 
         #endregion Parameters
 
@@ -49,16 +69,51 @@ namespace O365ExchangeRest
             FolderView folderView = new FolderView(10);
             FindFoldersResults findFoldersResults = null;
 
-            do
+            switch (this.ParameterSetName)
             {
-                findFoldersResults = exchangeService.FindFolders(WellKnownFolderName.MsgFolderRoot, folderView);
-                folderView.Offset += folderView.PageSize;
-                foreach (MailFolder folder in findFoldersResults)
-                {
-                    this.WriteObject(new PSObject(folder));
-                }
+                case "FolderName":
+                    do
+                    {
+                        SearchFilter searchFilter = new SearchFilter.IsEqualTo(MailFolderObjectSchema.DisplayName, this.FolderName);
+                        findFoldersResults = exchangeService.FindFolders(this.FolderRoot, searchFilter, folderView);
+                        folderView.Offset += folderView.PageSize;
+                        foreach (MailFolder folder in findFoldersResults)
+                        {
+                            this.WriteObject(new PSObject(folder));
+                        }
+                    }
+                    while (findFoldersResults.MoreAvailable);
+                    break;
+
+                case "FolderId":
+                    do
+                    {
+                        findFoldersResults = exchangeService.FindFolders(this.FolderRoot, folderView);
+                        folderView.Offset += folderView.PageSize;
+                        foreach (MailFolder folder in findFoldersResults)
+                        {
+                            if (folder.Id == this.FolderId.ToString())
+                            {
+                                this.WriteObject(new PSObject(folder));
+                            }
+                        }
+                    }
+                    while (findFoldersResults.MoreAvailable);
+                    break;
+
+                default:
+                    do
+                    {
+                        findFoldersResults = exchangeService.FindFolders(this.FolderRoot, folderView);
+                        folderView.Offset += folderView.PageSize;
+                        foreach (MailFolder folder in findFoldersResults)
+                        {
+                            this.WriteObject(new PSObject(folder));
+                        }
+                    }
+                    while (findFoldersResults.MoreAvailable);
+                    break;
             }
-            while (findFoldersResults.MoreAvailable);
         }
 
         /// <summary>
