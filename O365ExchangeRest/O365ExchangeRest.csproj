@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="NewO365MailboxFolder.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="GetO365InboxRule.cs" />
     <Compile Include="GetO365MailboxFolder.cs" />
