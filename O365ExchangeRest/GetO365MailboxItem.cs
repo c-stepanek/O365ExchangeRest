@@ -30,7 +30,7 @@ namespace O365ExchangeRest
         /// Gets or sets the mailbox folder name
         /// </summary>
         [Parameter(ParameterSetName = "FolderName", Mandatory = true)]
-        public WellKnownFolderName FolderName { get; set; }
+        public string FolderName { get; set; }
 
         /// <summary>
         /// Gets or sets the mailbox folder identification number
@@ -58,6 +58,10 @@ namespace O365ExchangeRest
             // Create the Exchange Service Object and auth with bearer token
             ExchangeService exchangeService = new ExchangeService(new AuthenticationProvider(), this.SmtpAddress.ToString(), RestEnvironment.OutlookBeta);
 
+            FolderId parentFolderId = null;
+            FolderView folderView = new FolderView(10);
+            FindFoldersResults findFoldersResults = null;
+
             MessageView messageView = new MessageView(50);
             FindItemsResults<Item> findItemsResults = null;
 
@@ -66,7 +70,19 @@ namespace O365ExchangeRest
                 case "FolderName":
                     do
                     {
-                        findItemsResults = exchangeService.FindItems(this.FolderName, messageView);
+                        SearchFilter searchFilter = new SearchFilter.IsEqualTo(MailFolderObjectSchema.DisplayName, this.FolderName);
+                        findFoldersResults = exchangeService.FindFolders(WellKnownFolderName.MsgFolderRoot, searchFilter, folderView);
+                        folderView.Offset += folderView.PageSize;
+                        foreach (MailFolder folder in findFoldersResults)
+                        {
+                            parentFolderId = new FolderId(folder.Id);
+                        }
+                    }
+                    while (findFoldersResults.MoreAvailable);
+
+                    do
+                    {
+                        findItemsResults = exchangeService.FindItems(parentFolderId, messageView);
                         messageView.Offset += messageView.PageSize;
                         foreach (Item item in findItemsResults)
                         {
