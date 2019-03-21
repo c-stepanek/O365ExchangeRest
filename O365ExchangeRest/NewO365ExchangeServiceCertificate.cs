@@ -67,7 +67,7 @@ namespace O365ExchangeRest
                 cert = Utils.NewSelfSignedCertificate(this.Name);
 
                 // Update App.config with new cert thumbprint
-                Utils.UpdateCertThumbprint(cert.Thumbprint);
+                Utils.UpdateConfigKeyValue("CertThumbprint", cert.Thumbprint);
             }
 
             Manifest manifest = new Manifest

@@ -44,9 +44,9 @@ namespace O365ExchangeRest
         /// <returns>Returns an access token.</returns>
         private string GetToken()
         {
-            string applicationId = Utils.GetApplicationId();
-            string certThumbprint = Utils.GetCertThumbprint();
-            string tenantId = Utils.GetTenantId();
+            string applicationId = Utils.GetConfigKeyValue("ApplicationId");
+            string certThumbprint = Utils.GetConfigKeyValue("CertThumbprint");
+            string tenantId = Utils.GetConfigKeyValue("TenantId");
 
             string authority = $"https://login.microsoftonline.com/{tenantId}";
             AuthenticationContext context = new AuthenticationContext(authority);

@@ -106,56 +106,32 @@ namespace O365ExchangeRest
         }
 
         /// <summary>
-        /// Gets the TenantId from the config file.
+        /// Gets the value for a given key in the app.config
         /// </summary>
-        /// <returns>Returns a tenant identifier.</returns>
-        public static string GetTenantId()
+        /// <param name="key">Name of the configuration key</param>
+        /// <returns>Returns the value for a given key</returns>
+        public static string GetConfigKeyValue(string key)
         {
             string appConfigPath = Uri.UnescapeDataString(new UriBuilder(Assembly.GetExecutingAssembly().CodeBase).Path) + ".config";
             XDocument appConfig = XDocument.Load(appConfigPath);
             return appConfig.Descendants("add")
-                    .First(node => (string)node.Attribute("key") == "TenantId")
+                    .First(node => (string)node.Attribute("key") == key)
                     .Attribute("value").Value;
         }
 
         /// <summary>
-        /// Gets the ApplicationId from the config file.
+        /// Updates the value for a given key in the app.config
         /// </summary>
-        /// <returns>Returns an application identifier.</returns>
-        public static string GetApplicationId()
+        /// <param name="key">Name of the configuration key</param>
+        /// <param name="value">Value to update</param>
+        public static void UpdateConfigKeyValue(string key, string value)
         {
             string appConfigPath = Uri.UnescapeDataString(new UriBuilder(Assembly.GetExecutingAssembly().CodeBase).Path) + ".config";
-            XDocument appConfig = XDocument.Load(appConfigPath);
-            return appConfig.Descendants("add")
-                    .First(node => (string)node.Attribute("key") == "ApplicationId")
-                    .Attribute("value").Value;
-        }
-
-        /// <summary>
-        /// Gets the CertThumbprint from the config file.
-        /// </summary>
-        /// <returns>Returns a certificate thumbprint.</returns>
-        public static string GetCertThumbprint()
-        {
-            string appConfigPath = Uri.UnescapeDataString(new UriBuilder(Assembly.GetExecutingAssembly().CodeBase).Path) + ".config";
-            XDocument appConfig = XDocument.Load(appConfigPath);
-            return appConfig.Descendants("add")
-                    .First(node => (string)node.Attribute("key") == "CertThumbprint")
-                    .Attribute("value").Value;
-        }
-
-        /// <summary>
-        /// Updates the CertThumbprint in the config file.
-        /// </summary>
-        /// <param name="newCertThumbprint">Certificate thumbprint</param>
-        public static void UpdateCertThumbprint(string newCertThumbprint)
-        {
-            string appConfigPath = Uri.UnescapeDataString(new UriBuilder(Assembly.GetExecutingAssembly().CodeBase).Path) + ".config";
-            var appConfig = XElement.Load(appConfigPath);
-            var item = appConfig.Descendants("add")
-                .First(node => (string)node.Attribute("key") == "CertThumbprint")
+            XElement appConfig = XElement.Load(appConfigPath);
+            XAttribute item = appConfig.Descendants("add")
+                .First(node => (string)node.Attribute("key") == key)
                 .Attribute("value");
-            item.SetValue(newCertThumbprint);
+            item.SetValue(value);
             appConfig.Save(appConfigPath);
         }
     }
