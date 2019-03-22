@@ -58,7 +58,7 @@ namespace O365ExchangeRest
 
             if (certFromStore == null)
             {
-                throw new ArgumentNullException("Certificate");
+                throw new ArgumentNullException("Certificate", "Make sure you have the proper certificate thumbprint in the module config file.");
             }
 
             ClientAssertionCertificate cert = new ClientAssertionCertificate(
@@ -75,7 +75,7 @@ namespace O365ExchangeRest
             {
                 if (ex.InnerException.Message.ToString() == "Keyset does not exist\r\n")
                 {
-                    throw new Exception("You need to be an administrator to read the private key from the local machine store.");
+                    throw new UnauthorizedAccessException("You need to be an administrator to read the private key from the local machine store.");
                 }
                 else
                 {
