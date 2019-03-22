@@ -60,11 +60,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GetO365ExchangeRestAppConfig.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="NewO365MailboxFolder.cs" />
     <Compile Include="NewO365MailboxMessage.cs" />
     <Compile Include="RemoveO365MailboxFolder.cs" />
     <Compile Include="RemoveO365MailboxItem.cs" />
+    <Compile Include="SetO365ExchangeRestAppConfig.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="GetO365InboxRule.cs" />
     <Compile Include="GetO365MailboxFolder.cs" />
