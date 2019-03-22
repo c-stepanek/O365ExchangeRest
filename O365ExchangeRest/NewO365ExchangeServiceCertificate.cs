@@ -67,6 +67,8 @@ namespace O365ExchangeRest
                 cert = Utils.NewSelfSignedCertificate(this.Name);
             }
 
+            this.WriteObject(cert);
+
             Manifest manifest = new Manifest
             {
                 keyId = Guid.NewGuid(),
