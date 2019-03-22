@@ -7,8 +7,11 @@ You can refer to Ivan's documentation here: https://github.com/ivfranji/Exchange
 # Module Config
 Config File: `O365ExchangeRest.dll.config`
 
-I have added `New-O365ExchangeServiceCertificate` to the module which will create the self-signed certificate and update the config file with the certificate thumbprint.
-You will need to manually add your Office365 TenantId and Azure ApplicationId.
+Use `New-O365ExchangeServiceCertificate` to create a self-signed certificate and generate the JSON blob for the Azure application manifest.
+
+Use `Get-O365ExchangeRestAppConfig` to query the config file.
+
+Use `Set-O365ExchangeRestAppConfig` to update the config file.
 
 # Notes
 If you have made changes to the config file after the module has been loaded, you will have to reload the module to pickup the changes.
